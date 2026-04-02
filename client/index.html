@@ -1,0 +1,635 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CampusPulse – College Event Management</title>
+    <meta
+      name="description"
+      content="Track participation, manage events, and understand student engagement."
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700&family=Audiowide&family=Space+Grotesk:wght@400;500;600&family=Exo+2:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="https://unpkg.com/lenis@1.1.20/dist/lenis.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api/dist/face-api.js"></script>
+    
+    <link rel="stylesheet" href="style.css">
+  </head>
+
+  <body>
+    <div class="toast-container" id="toastContainer"></div>
+
+    <div class="conf-overlay" id="confirmationOverlay">
+      <div class="conf-expansion-circle"></div>
+      <div class="conf-content" id="confirmationContent">
+        <div class="conf-icon-wrapper" id="confirmationIcon">
+          
+        </div>
+        <div class="conf-message" id="confirmationMessage"></div>
+      </div>
+    </div>
+
+    <div class="page active" id="page-landing">
+      <nav class="landing-nav layer-fg">
+        <div class="landing-nav-inner">
+          <div class="flex items-center gap-2">
+            <i class="fa-solid fa-bolt color-primary"></i
+            ><span class="font-bold">CampusPulse</span>
+          </div>
+          <button
+            class="btn btn-outline-primary btn-sm"
+            onclick="showPage('login')"
+          >
+            Sign In
+          </button>
+        </div>
+      </nav>
+
+      <div class="cinematic-container">
+        
+        <div class="layer-bg">
+          <div class="hero-glow1"></div>
+          <div class="hero-glow2"></div>
+        </div>
+
+        <div class="layer-mid">
+          <section class="hero">
+            <div class="hero-content reveal-up">
+              <div class="hero-trust floating">
+                <i class="fa-solid fa-circle-check"></i> Trusted by 50+ Universities
+              </div>
+              <h1 class="text-glow">
+                Manage College Events <span class="animated-gradient-text">Smarter</span>
+              </h1>
+              <p>
+                Track participation, manage events, and understand student
+                engagement — all in one beautiful platform.
+              </p>
+              <div class="hero-ctas">
+                <button class="btn btn-primary btn-lg" onclick="showPage('login')">
+                  Explore Platform
+                  <i class="fa-solid fa-arrow-right ml-2"></i>
+                </button>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <div class="layer-fg">
+          <section class="features-section reveal-up">
+            <h2 class="section-title">Everything You Need</h2>
+            <p class="section-subtitle">
+              Powerful tools for modern campus event management.
+            </p>
+            <div class="features-grid" id="featuresGrid"></div>
+          </section>
+
+          <section class="stats-section reveal-up">
+            <div class="stats-grid" id="statsGrid"></div>
+          </section>
+
+          <footer class="landing-footer">
+            <div class="landing-footer-inner">
+              <div class="flex items-center gap-2">
+                <i class="fa-solid fa-bolt color-primary"></i
+                ><span>CampusPulse © 2026</span>
+              </div>
+              <span>Built for Modern Universities</span>
+            </div>
+          </footer>
+        </div>
+      </div>
+    </div>
+
+    <div class="page" id="page-login">
+      <div class="login-wrap">
+        <div class="login-glow1"></div>
+        <div class="login-glow2"></div>
+        <div class="login-card" style="animation: slideUp 0.5s ease">
+          <button
+            class="flex items-center gap-2 color-muted mb-8"
+            onclick="showPage('landing')"
+            style="font-size: 14px"
+          >
+            <i class="fa-solid fa-arrow-left"></i> Back to home
+          </button>
+          <div class="text-center mb-8">
+            <div class="flex items-center justify-center gap-2 mb-4">
+              <i
+                class="fa-solid fa-bolt color-primary"
+                style="font-size: 24px"
+              ></i
+              ><span style="font-size: 20px" class="font-bold"
+                >CampusPulse</span
+              >
+            </div>
+            <h1 style="font-size: 24px" class="font-bold mb-2">Welcome back</h1>
+            <p class="color-muted">Select your role to continue</p>
+          </div>
+          <div class="role-grid">
+            <button
+              class="glass-card role-btn"
+              id="roleStudent"
+              onclick="selectRole('student')"
+            >
+              <i class="fa-solid fa-graduation-cap color-muted"></i>
+              <p class="role-label">Student</p>
+              <p class="role-desc">View & join events</p></button
+            ><button
+              class="glass-card role-btn"
+              id="roleFaculty"
+              onclick="selectRole('faculty')"
+            >
+              <i class="fa-solid fa-book-open color-muted"></i>
+              <p class="role-label">Faculty</p>
+              <p class="role-desc">Manage & create events</p>
+            </button>
+          </div>
+
+          <div id="faceIdLoginContainer" style="display: none;" class="glass-card mb-4 text-center scanner-ui">
+            <div class="relative mx-auto mb-4 scanner-container" id="loginScannerContainer">
+              <video id="loginVideo" autoplay muted playsinline style="width: 100%; height: 100%; object-fit: cover;"></video>
+              <canvas id="loginCanvas" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></canvas>
+              <div id="loginScanLine" class="scan-line-modern"></div>
+              <div class="scanner-overlay"></div>
+              <div id="countdownCircle" class="countdown-overlay" style="display: none;">
+                <span id="countdownText">3</span>
+              </div>
+            </div>
+            <div class="flex items-center justify-between mb-2">
+              <p id="loginFaceStatus" class="text-xs color-muted uppercase tracking-widest">Initializing...</p>
+              <p id="faceConfidence" class="text-xs font-bold color-primary">0%</p>
+            </div>
+            <div class="confidence-bar-wrap"><div id="confidenceBar" class="confidence-bar-fill"></div></div>
+            <button class="btn btn-outline-primary w-full mt-4" onclick="toggleManualLogin()">Manual Override</button>
+          </div>
+
+          <div id="manualLoginContainer" class="glass-card space-y-4">
+            <div>
+              <label class="text-sm color-muted mb-1" style="display: block"
+                >Email</label
+              ><input class="input" id="loginEmail" placeholder="your@campus.edu" />
+            </div>
+            <div>
+              <label class="text-sm color-muted mb-1" style="display: block"
+                >Password</label
+              ><input class="input" id="loginPassword" type="password" placeholder="••••••••" />
+            </div>
+            <div class="grid grid-2 gap-4">
+              <button
+                class="btn btn-outline-primary"
+                id="faceLoginBtn"
+                onclick="startFaceLogin()"
+                disabled
+              >
+                <i class="fa-solid fa-face-viewfinder mr-2"></i> Face ID
+              </button>
+              <button
+                class="btn btn-primary"
+                id="loginBtn"
+                onclick="doLogin()"
+                disabled
+              >
+                Sign In
+              </button>
+            </div>
+            <p id="registerLinkContainer" class="text-xs text-center color-muted" style="display: none;">
+              Don't have an account? <a href="#" onclick="showPage('register')" class="color-primary">Register here</a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="page" id="page-register">
+      <div class="login-wrap">
+        <div class="login-glow1"></div>
+        <div class="login-glow2"></div>
+        <div class="login-card" style="animation: slideUp 0.5s ease">
+          <button
+            class="flex items-center gap-2 color-muted mb-8"
+            onclick="showPage('login')"
+            style="font-size: 14px"
+          >
+            <i class="fa-solid fa-arrow-left"></i> Back to login
+          </button>
+          <div class="text-center mb-8">
+            <h1 style="font-size: 24px;" class="font-bold mb-2">Faculty Registration</h1>
+            <p class="color-muted">Join the CampusPulse network</p>
+          </div>
+
+          <div class="glass-card space-y-4">
+            <div>
+              <label class="text-sm color-muted mb-1" style="display: block">Full Name</label>
+              <input class="input" id="regFullName" placeholder="Enter full name" />
+            </div>
+            <div>
+              <label class="text-sm color-muted mb-1" style="display: block">Email Address</label>
+              <input class="input" id="regFullEmail" placeholder="Enter email address" />
+            </div>
+            <div>
+              <label class="text-sm color-muted mb-1" style="display: block">Department</label>
+              <select class="input" id="regFullDept">
+                <option value="">Select department</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-sm color-muted mb-1" style="display: block">Password</label>
+              <input class="input" id="regFullPassword" type="password" placeholder="Enter password" />
+            </div>
+
+            <div id="faceIdEnrollContainer" style="display: none;" class="mt-4 pt-4 border-t border-dashed border-gray-700 text-center">
+              <p class="text-sm font-bold mb-2 uppercase tracking-wide color-primary">Identity Enrollment</p>
+              <div class="relative mx-auto mb-4" style="width: 200px; height: 150px; border-radius: 12px; overflow: hidden; border: 2px solid var(--primary); background: #000;">
+                <video id="enrollVideo" autoplay muted playsinline style="width: 100%; height: 100%; object-fit: cover;"></video>
+                <canvas id="enrollCanvas" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></canvas>
+              </div>
+              <p id="enrollFaceStatus" class="text-xs color-muted mb-2">Center your face in the frame</p>
+              <button id="enrollFaceBtn" class="btn btn-outline-primary btn-sm w-full" onclick="enrollFace()" disabled>
+                Capture Biometric Data
+              </button>
+            </div>
+
+            <button class="btn btn-outline w-full" id="toggleEnrollBtn" onclick="toggleFaceEnroll()">
+              <i class="fa-solid fa-face-viewfinder mr-2"></i> Add Face ID (Recommended)
+            </button>
+
+            <button class="btn btn-primary w-full" onclick="doRegister()">
+              Complete Registration
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="page" id="page-event-register">
+      <div class="login-wrap">
+        <div class="login-card">
+          <h1 style="font-size: 24px" class="font-bold mb-4">
+            Event Registration
+          </h1>
+
+          <input class="input" id="regName" placeholder="Your Name" />
+          <input class="input" id="regEmail" placeholder="Your Email" />
+          <select class="input" id="regDept">
+            <option value="">Select Department</option>
+            <option>Computer Science</option>
+            <option>Information Technology</option>
+            <option>Electronics</option>
+            <option>Mechanical</option>
+            <option>Civil</option>
+            <option>Electrical</option>
+          </select>
+          <button
+            class="btn btn-primary w-full mt-3"
+            onclick="registerStudentFromLink()"
+          >
+            Register for Event
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="page" id="page-student">
+      <div class="dashboard-wrap">
+        <aside class="sidebar" id="studentSidebar">
+          <div class="sidebar-logo">
+            <i class="fa-solid fa-bolt color-primary"></i> CampusPulse
+          </div>
+          <nav class="sidebar-nav" id="studentNav"></nav>
+          <div class="sidebar-user">
+            <div class="flex items-center gap-3 mb-3">
+              <div class="sidebar-avatar" id="studentAvatar"></div>
+              <div class="flex-1 min-w-0">
+                <p
+                  class="text-sm font-medium truncate"
+                  id="studentNameSidebar"
+                ></p>
+                <p class="text-xs color-muted capitalize">student</p>
+              </div>
+            </div>
+            <button
+              class="btn btn-ghost w-full"
+              style="justify-content: flex-start"
+              onclick="doLogout()"
+            >
+              <i class="fa-solid fa-right-from-bracket mr-2"></i> Sign Out
+            </button>
+          </div>
+        </aside>
+        <div class="mobile-overlay" id="studentMobileOverlay">
+          <div
+            class="mobile-backdrop"
+            onclick="closeMobileMenu('student')"
+          ></div>
+          <div class="mobile-sidebar">
+            <div class="sidebar-logo" style="justify-content: space-between">
+              <div class="flex items-center gap-2">
+                <i class="fa-solid fa-bolt color-primary"></i> CampusPulse
+              </div>
+              <button class="color-muted" onclick="closeMobileMenu('student')">
+                <i class="fa-solid fa-xmark"></i>
+              </button>
+            </div>
+            <nav class="sidebar-nav" id="studentNavMobile"></nav>
+          </div>
+        </div>
+        <div class="dashboard-main">
+          <div class="topbar">
+            <div class="flex items-center gap-3">
+              <button
+                class="mobile-menu-btn color-muted"
+                onclick="openMobileMenu('student')"
+              >
+                <i class="fa-solid fa-bars" style="font-size: 18px"></i>
+              </button>
+              <div class="search-wrap">
+                <i class="fa-solid fa-magnifying-glass"></i
+                ><input
+                  class="input search-input"
+                  placeholder="Search events..."
+                />
+              </div>
+            </div>
+          </div>
+          <div class="dashboard-content" id="studentContent"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="page" id="page-faculty">
+      <div class="dashboard-wrap">
+        <aside class="sidebar" id="facultySidebar">
+          <div class="sidebar-logo">
+            <i class="fa-solid fa-bolt color-primary"></i> CampusPulse
+          </div>
+          <nav class="sidebar-nav" id="facultyNav"></nav>
+          <div class="sidebar-user">
+            <div class="flex items-center gap-3 mb-3">
+              <div class="sidebar-avatar" id="facultyAvatar"></div>
+              <div class="flex-1 min-w-0">
+                <p
+                  class="text-sm font-medium truncate"
+                  id="facultyNameSidebar"
+                ></p>
+                <p class="text-xs color-muted capitalize">faculty</p>
+              </div>
+            </div>
+            <button
+              class="btn btn-ghost w-full"
+              style="justify-content: flex-start"
+              onclick="doLogout()"
+            >
+              <i class="fa-solid fa-right-from-bracket mr-2"></i> Sign Out
+            </button>
+          </div>
+        </aside>
+        <div class="mobile-overlay" id="facultyMobileOverlay">
+          <div
+            class="mobile-backdrop"
+            onclick="closeMobileMenu('faculty')"
+          ></div>
+          <div class="mobile-sidebar">
+            <div class="sidebar-logo" style="justify-content: space-between">
+              <div class="flex items-center gap-2">
+                <i class="fa-solid fa-bolt color-primary"></i> CampusPulse
+              </div>
+              <button class="color-muted" onclick="closeMobileMenu('faculty')">
+                <i class="fa-solid fa-xmark"></i>
+              </button>
+            </div>
+            <nav class="sidebar-nav" id="facultyNavMobile"></nav>
+          </div>
+        </div>
+        <div class="dashboard-main">
+          <div class="topbar">
+            <div class="flex items-center gap-3">
+              <button
+                class="mobile-menu-btn color-muted"
+                onclick="openMobileMenu('faculty')"
+              >
+                <i class="fa-solid fa-bars" style="font-size: 18px"></i>
+              </button>
+              <div class="search-wrap">
+                <i class="fa-solid fa-magnifying-glass"></i
+                ><input
+                  class="input search-input"
+                  placeholder="Search events..."
+                />
+              </div>
+            </div>
+          </div>
+          <div class="dashboard-content" id="facultyContent"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="page" id="page-analytics">
+      <div class="dashboard-wrap">
+        <aside class="sidebar" id="analyticsSidebar"></aside>
+        <div class="mobile-overlay" id="analyticsMobileOverlay">
+          <div
+            class="mobile-backdrop"
+            onclick="closeMobileMenu('analytics')"
+          ></div>
+          <div class="mobile-sidebar" id="analyticsMobileSidebar"></div>
+        </div>
+        <div class="dashboard-main">
+          <div class="topbar">
+            <div class="flex items-center gap-3">
+              <button
+                class="mobile-menu-btn color-muted"
+                onclick="openMobileMenu('analytics')"
+              >
+                <i class="fa-solid fa-bars" style="font-size: 18px"></i>
+              </button>
+              <div class="search-wrap">
+                <i class="fa-solid fa-magnifying-glass"></i
+                ><input
+                  class="input search-input"
+                  placeholder="Search events..."
+                />
+              </div>
+            </div>
+          </div>
+          <div class="dashboard-content" id="analyticsContent"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="page" id="page-leaderboard">
+      <div class="dashboard-wrap">
+        <aside class="sidebar" id="leaderboardSidebar"></aside>
+        <div class="mobile-overlay" id="leaderboardMobileOverlay">
+          <div
+            class="mobile-backdrop"
+            onclick="closeMobileMenu('leaderboard')"
+          ></div>
+          <div class="mobile-sidebar" id="leaderboardMobileSidebar"></div>
+        </div>
+        <div class="dashboard-main">
+          <div class="topbar">
+            <div class="flex items-center gap-3">
+              <button
+                class="mobile-menu-btn color-muted"
+                onclick="openMobileMenu('leaderboard')"
+              >
+                <i class="fa-solid fa-bars" style="font-size: 18px"></i>
+              </button>
+              <div class="search-wrap">
+                <i class="fa-solid fa-magnifying-glass"></i
+                ><input
+                  class="input search-input"
+                  placeholder="Search events..."
+                />
+              </div>
+            </div>
+          </div>
+          <div class="dashboard-content" id="leaderboardContent"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="page" id="page-certificates">
+      <div class="dashboard-wrap">
+        <aside class="sidebar" id="certificatesSidebar"></aside>
+        <div class="mobile-overlay" id="certificatesMobileOverlay">
+          <div
+            class="mobile-backdrop"
+            onclick="closeMobileMenu('certificates')"
+          ></div>
+          <div class="mobile-sidebar" id="certificatesMobileSidebar"></div>
+        </div>
+        <div class="dashboard-main">
+          <div class="topbar">
+            <div class="flex items-center gap-3">
+              <button
+                class="mobile-menu-btn color-muted"
+                onclick="openMobileMenu('certificates')"
+              >
+                <i class="fa-solid fa-bars" style="font-size: 18px"></i>
+              </button>
+              <div class="search-wrap">
+                <i class="fa-solid fa-magnifying-glass"></i
+                ><input
+                  class="input search-input"
+                  placeholder="Search events..."
+                />
+              </div>
+            </div>
+          </div>
+          <div class="dashboard-content" id="certificatesContent"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-overlay" id="createEventModal">
+      <div class="modal">
+        <div class="modal-title">Create New Event</div>
+        <div class="space-y-3">
+          <input class="input" id="newTitle" placeholder="Event Title" /><input
+            class="input"
+            id="newDesc"
+            placeholder="Description"
+          />
+          <div class="grid grid-2">
+            <input class="input" id="newDate" type="date" /><input
+              class="input"
+              id="newTime"
+              placeholder="Time e.g. 10:00 AM"
+            />
+          </div>
+          <input class="input" id="newVenue" placeholder="Venue" />
+          <div class="grid grid-2">
+            <select class="input" id="newDept"></select
+            ><select class="input" id="newCat"></select>
+          </div>
+          <input
+            class="input"
+            id="newCapacity"
+            type="number"
+            placeholder="Capacity"
+            value="100"
+          />
+          <div class="flex gap-2">
+            <button
+              type="button"
+              class="btn btn-primary flex-1"
+              onclick="createNewEvent()"
+            >
+              Create Event</button
+            ><button
+              class="btn btn-outline"
+              onclick="closeModal('createEventModal')"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-overlay" id="regsModal">
+      <div class="modal" style="max-width: 600px">
+        <div class="flex items-center justify-between mb-4">
+          <div class="modal-title" style="margin-bottom: 0" id="regsModalTitle">
+            Registrations
+          </div>
+          <button class="btn btn-ghost" onclick="closeModal('regsModal')">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+        <div id="regsModalContent" class="space-y-2"></div>
+      </div>
+    </div>
+
+    <div class="modal-overlay" id="qrScannerModal">
+      <div class="modal" style="max-width: 500px">
+        <div class="flex items-center justify-between mb-4">
+          <div class="modal-title">Scan Student QR</div>
+
+          <button class="btn btn-ghost" onclick="closeQRScanner()">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+
+        <div id="qr-reader" style="width: 100%"></div>
+      </div>
+    </div>
+
+    <div class="modal-overlay" id="qrDisplayModal">
+      <div class="modal" style="max-width: 400px; text-align: center">
+        <div class="modal-title">Your Event QR Code</div>
+
+        <img id="studentQRImage" style="width: 220px; margin: 20px auto" />
+        <button class="btn btn-primary mt-2" onclick="downloadStudentQR()">
+          Download QR
+        </button>
+
+        <p class="text-sm color-muted">
+          Show this QR code to faculty for attendance
+        </p>
+
+        <button
+          class="btn btn-outline mt-3"
+          onclick="closeModal('qrDisplayModal')"
+        >
+          Close
+        </button>
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
